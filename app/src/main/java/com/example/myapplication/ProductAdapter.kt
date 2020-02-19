@@ -1,11 +1,14 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list.view.*
+
 
 class ProductAdapter(val products: ArrayList<Product>) : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
     override fun getItemCount(): Int = products.size
@@ -29,12 +32,12 @@ class ProductAdapter(val products: ArrayList<Product>) : RecyclerView.Adapter<Pr
         }
 
         override fun onClick(p0: View) {
-            Toast.makeText(view.context, "${product.name} Diklik", Toast.LENGTH_SHORT).show()
+            Toast.makeText(view.context, "${product.name} clicked", Toast.LENGTH_SHORT).show()
         }
 
         fun bindData(product: Product) {
             this.product = product
-            view.productImage.setImageResource(R.drawable.product)
+            Picasso.get().load(product.images!!.first().imageUrl).into(view.productImage);
             view.productName.setText(product.name)
             view.productPrice.setText(product.price.toString())
         }
