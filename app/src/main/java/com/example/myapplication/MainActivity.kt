@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.app.ActivityOptions
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,18 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +48,13 @@ class MainActivity : AppCompatActivity() {
             doLoadData(this, apiInterface)
             swipeContainer.isRefreshing = false
         }
+
+        fabAddProduct.setOnClickListener { view ->
+            val intent = Intent(this, ProductNew::class.java)
+
+            // start your next activity
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+        }
     }
 
     fun doLoadData(context: Context, apiInterface: ProductApi) {
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                     { product: List<Product> ->
                         productList.addAll(product)
                         if (page == 1) {
-                            productAdapter = ProductAdapter(this@MainActivity, productList)
+                            productAdapter = ProductAdapter(productList)
                             rvProduct.layoutManager = GridLayoutManager(this@MainActivity, 2)
                             rvProduct.adapter = productAdapter
                         } else {
