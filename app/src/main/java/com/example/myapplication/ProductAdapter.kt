@@ -1,16 +1,16 @@
 package com.example.myapplication
 
-import android.content.Intent
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.product_list.view.*
 
 
-class ProductAdapter(val products: ArrayList<Product>) : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+class ProductAdapter(private val context: Context, val products: ArrayList<Product>) : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
     override fun getItemCount(): Int = products.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,7 +23,13 @@ class ProductAdapter(val products: ArrayList<Product>) : RecyclerView.Adapter<Pr
         holder.bindData(products.get(position))
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    fun refreshAdapter(productList: ArrayList<Product>) {
+        this.products.addAll(productList)
+        notifyItemRangeChanged(0, this.products.size)
+//        notifyDataSetChanged()
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private var view : View = itemView
         private lateinit var product : Product
 
@@ -37,7 +43,13 @@ class ProductAdapter(val products: ArrayList<Product>) : RecyclerView.Adapter<Pr
 
         fun bindData(product: Product) {
             this.product = product
-            Picasso.get().load(product.images!!.first().imageUrl).into(view.productImage);
+            val productImageUrl  = product.images!!.first().imageUrl
+
+            Glide.with(view.context)
+                .load(productImageUrl)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.noimage)
+                .into(view.productImage)
             view.productName.setText(product.name)
             view.productPrice.setText(product.price.toString())
         }
